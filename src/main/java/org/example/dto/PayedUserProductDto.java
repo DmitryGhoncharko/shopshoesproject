@@ -1,18 +1,18 @@
-package org.example.entity;
+package org.example.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Date;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
-public class PayedUserProduct {
+public class PayedUserProductDto {
     private Long id;
-    private UserProduct userProduct;
-    private Date date;
+    private Long userProductId;
+    private Date payedDate;
 }
