@@ -59,7 +59,7 @@ public class UserProductDao {
             throw new DaoException(e);
         }
     }
-    public Optional<UserProduct> findById(long id){
+    public Optional<UserProduct> findById(long id) throws DaoException {
         try(Connection connection = connectionPool.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL_FIND_BY_ID)){
             preparedStatement.setLong(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -96,11 +96,11 @@ public class UserProductDao {
               );
             }
         }catch (SQLException e){
-
+            throw new DaoException();
         }
        return Optional.empty();
     }
-    public List<UserProduct> findAll(){
+    public List<UserProduct> findAll() throws DaoException {
         List<UserProduct> userProductList = new ArrayList<>();
         try(Connection connection = connectionPool.getConnection(); Statement statement = connection.createStatement()){
             ResultSet resultSet  = statement.executeQuery(SQL_FIND_ALL);
@@ -137,7 +137,7 @@ public class UserProductDao {
                 );
             }
         }catch (SQLException e){
-
+            throw new DaoException(e);
         }
         return userProductList;
     }

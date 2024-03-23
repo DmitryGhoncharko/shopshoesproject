@@ -14,6 +14,8 @@ public class UserDao {
     private final ConnectionPool connectionPool;
     private static final String SQL_CREATE_USER = "insert into _user(user_login, user_password, user_role_id) values (?,?,?)";
     private static final String SQL_FIND_USER_BY_ID = "select user_login, user_password, user_role_id, user_balance from _user where user_id = ?";
+    private static final String SQL_FIND_USER_BY_LOGIN = "select user_id, user_login, user_password, user_role_id, user_balance from  _user where user_login = ?";
+    private static final String SQL_UPDATE_USER_BALANCE = "update _user set user_balance = ? where user_id = ?";
     public User create(String login, String password, Role role) throws DaoException {
         try(Connection connection = connectionPool.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_USER, Statement.RETURN_GENERATED_KEYS)){
             preparedStatement.setString(1,login);
@@ -22,7 +24,7 @@ public class UserDao {
             int countRowsUpdated = preparedStatement.executeUpdate();
             if(countRowsUpdated>0){
                 ResultSet resultSet = preparedStatement.getGeneratedKeys();
-                return User.
+                return  User.
                         builder().
                         id(resultSet.getLong(1)).
                         login(login).
@@ -54,5 +56,34 @@ public class UserDao {
             throw new DaoException(e);
         }
         return Optional.empty();
+    }
+    public Optional<User> findByLogin(String login) throws DaoException {
+    try(Connection connection = connectionPool.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL_FIND_USER_BY_LOGIN)){
+            preparedStatement.setString(1,login);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                return Optional.of(
+                        User.builder().
+                                id(resultSet.getLong(1)).
+                                login(resultSet.getString(2)).
+                                password(resultSet.getString(3)).
+                                role(Role.values()[resultSet.getInt(4)]).
+                                balance(resultSet.getDouble(5)).
+                                build()
+                );
+            }
+        }catch (SQLException e){
+            throw new DaoException(e);
+        }
+    return Optional.empty();
+    }
+    public void updateUserBalance(long userId, double balance) throws DaoException {
+        try(Connection connection  = connectionPool.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE_USER_BALANCE)){
+            preparedStatement.setDouble(1,balance);
+            preparedStatement.setLong(2,userId);
+            preparedStatement.executeUpdate();
+        }catch (SQLException e){
+            throw new DaoException(e);
+        }
     }
 }
