@@ -5,80 +5,24 @@ import org.example.model.connection.ConnectionPool;
 import org.example.model.connection.HikariCPConnectionPool;
 import org.example.model.dao.UserDao;
 import org.example.service.UserService;
+import org.example.view.MainMenuJFrame;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main {
-    private static final ConnectionPool connectionPool = HikariCPConnectionPool.getInstance();
-    private static JFrame frame;
-    private static UserService userService;
-    private static JLabel loginLabel;
-    private static JLabel passwordLabel;
-    private static JTextField loginTextField;
-    private static JTextField passwordTextField;
-    private static JButton loginButton;
-    private static void initService(){
-        UserDao userDao = new UserDao(connectionPool);
-        userService = new UserService(userDao);
 
-    }
-    private static void init(){
-        loginLabel = new JLabel("Логин");
-        passwordLabel = new JLabel("Пароль");
-        loginTextField = new JTextField();
-        passwordTextField = new JTextField();
-        loginButton = new JButton("Войти");
-        loginLabel.setBounds(430,80,100,50);
-        passwordLabel.setBounds(630,80,100,50);
-        loginTextField.setBounds(400,120,100,50);
-        passwordTextField.setBounds(600,120,100,50);
-        loginButton.setBounds(300,50,100,100);
-        loginLabel.setVisible(true);
-        passwordLabel.setVisible(true);
-        loginTextField.setVisible(true);
-        passwordTextField.setVisible(true);
-        loginButton.setVisible(true);
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-               String login = loginTextField.getText();
-               String password = passwordTextField.getText();
-                try {
-                    userService.loginUser(login,password);
-                } catch (UserLoginException e) {
-                    JDialog jDialog = new JDialog(frame,"ОШИБКА");
-                    JLabel jLabel = new JLabel("ОШИБКА");
-                    jDialog.add(jLabel);
-                    jDialog.setSize(200,200);
-                    jDialog.setVisible(true);
-                }
-            }
-        });
-    }
+
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                new MainMenuJFrame().init();
             }
         });
     }
-    private static void createAndShowGUI() {
-        initService();
-        init();
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        frame = new JFrame("App");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,600);
-        frame.getContentPane().add(loginLabel);
-        frame.getContentPane().add(passwordLabel);
-        frame.getContentPane().add(loginTextField);
-        frame.getContentPane().add(passwordTextField);
-        frame.getContentPane().add(loginButton);
-        frame.setVisible(true);
-    }
+
 }
 
 /**

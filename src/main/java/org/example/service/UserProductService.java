@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class UserProductService {
     private final UserProductDao userProductDao;
     private final ProductDao productDao;
-    public UserProduct addToBucket(long userId, long productId, int count) throws CannotAddToBucketProductException {
+    public void addToBucket(long userId, long productId, int count) throws CannotAddToBucketProductException {
         try{
            Optional<Product> optionalProduct =  productDao.findById(productId);
            if(optionalProduct.isPresent()){
@@ -29,7 +29,6 @@ public class UserProductService {
         }catch (DaoException e){
             throw new CannotAddToBucketProductException();
         }
-        throw new CannotAddToBucketProductException();
     }
     public void removeFromBucket(long id) throws  CannotRemoveFromBucketException {
         try{
